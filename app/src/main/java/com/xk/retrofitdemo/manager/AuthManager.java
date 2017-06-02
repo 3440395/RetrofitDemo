@@ -6,12 +6,11 @@ import android.content.Context;
 import com.xk.retrofitdemo.Constant;
 import com.xk.retrofitdemo.entry.UrlMap;
 import com.xk.retrofitdemo.retrofit.Networks;
+import com.xk.retrofitdemo.retrofit.RxSchedulerHelper;
 
 import java.util.HashMap;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 
 public class AuthManager {
@@ -36,8 +35,7 @@ public class AuthManager {
 
 
     public String getPortalUrl() {
-        String portal_url = Constant.GOOGLE;
-        return portal_url;
+        return Constant.GOOGLE;
     }
 
 
@@ -46,19 +44,12 @@ public class AuthManager {
      */
     public Observable<UrlMap> getUrlMap() {
         String portalUrl = getPortalUrl();
-        return io_main(
-                Networks
-                        .getInstance()
-                        .getApiService()
-                        .getDDD(portalUrl, new HashMap<String, String>(), "DDDDDDDDDD")
-        );
+        return Networks
+                .getInstance()
+                .getApiService()
+                .getDDD(portalUrl, new HashMap<String, String>(), "DDDDDDDDDD")
+                .compose(RxSchedulerHelper.<UrlMap>io_main());
     }
 
-
-    public <T> Observable<T> io_main(Observable<T> observable) {
-        return observable.subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
 }
 

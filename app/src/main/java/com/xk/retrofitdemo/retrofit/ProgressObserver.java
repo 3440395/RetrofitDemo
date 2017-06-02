@@ -1,9 +1,8 @@
 package com.xk.retrofitdemo.retrofit;
 
-import android.util.Log;
-
 import com.xk.retrofitdemo.BaseActivity;
 
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 
 
@@ -11,10 +10,13 @@ import io.reactivex.observers.DisposableObserver;
  * 必须要继承自DisposableObserver，方便统一管理
  */
 public abstract class ProgressObserver<T> extends DisposableObserver<T> {
+    private static final String TAG = "ProgressObserver";
 
     private BaseActivity activity;
+    private CompositeDisposable disposables;
 
-    public ProgressObserver(BaseActivity activity){
+    public ProgressObserver(CompositeDisposable disposables, BaseActivity activity) {
+        this.disposables = disposables;
         this.activity = activity;
     }
 
@@ -25,15 +27,16 @@ public abstract class ProgressObserver<T> extends DisposableObserver<T> {
     @Override
     public void onStart() {
         super.onStart();
+        disposables.add(this);
         activity.showProgressDialog();
-        Log.e(TAG,"onStart");
     }
 
-    private static final String TAG = "ProgressObserver";
     @Override
     public void onComplete() {
-        Log.e(TAG, "onComplete: ");
         activity.dismissProgressDialog();
+        disposables.remove(this);
+        disposables = null;
+
     }
 
 
@@ -45,11 +48,8 @@ public abstract class ProgressObserver<T> extends DisposableObserver<T> {
     }
 
 
-
-
     @Override
     public void onNext(T t) {
-        Log.e(TAG, "onNext: ");
         onSuccess(t);
     }
 
