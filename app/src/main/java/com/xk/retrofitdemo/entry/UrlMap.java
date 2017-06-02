@@ -22,7 +22,7 @@ public class UrlMap {
 
 
     public String getUrl(String key) {
-        String result=null;
+        String result = null;
         if (!isTransition) {
             transition();
         }
@@ -32,11 +32,22 @@ public class UrlMap {
         return result;
     }
 
+    public Object[] getKeys() {
+        if (!isTransition) {
+            transition();
+        }
+        Object[] keys = null;
+        if (map != null) {
+
+            keys = map.keySet().toArray();
+        }
+        return keys;
+    }
 
     private void transition() {
         map = new HashMap<>();
         for (UrlMap.UrlList urlList : UrlList) {
-            map.put(urlList.Key, urlList.text);
+            map.put(urlList.Name, urlList.Key);
         }
         isTransition = true;
     }

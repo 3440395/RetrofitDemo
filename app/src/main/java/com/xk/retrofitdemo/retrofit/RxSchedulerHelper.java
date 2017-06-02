@@ -18,7 +18,7 @@ public class RxSchedulerHelper {
             @Override
             public ObservableSource<T> apply(@NonNull Observable<T> upstream) {
                 return upstream.subscribeOn(Schedulers.io())
-                        .unsubscribeOn(Schedulers.io())
+//                        .unsubscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread());
             }
         };
